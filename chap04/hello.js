@@ -2,10 +2,11 @@
 // 자바스크립트는 웹브라우저에서 실행
 // node.js: 웹브라우저가 아닌 외부환경에서도 실행 시켜주는 방법
 // js 실행환경 => node.js
-const { sum, minus } = require("./module");
+const { sum, minus } = require("./module"); // ./module에서 sum,minus의 정보 불러오기
 function nodeFnc() {
-  console.log(`hello Node!!`);
+  // nodeFnc( )라는 이름의 함수 선언
+  console.log(`hello Node!!`); // cmd에 hello Node!! 출력
 }
-nodeFnc();
+nodeFnc(); // 함수 호출
 
-console.log(minus(10, 20));
+console.log(minus(10, 20)); // cmd에 (10,20)의 minus값을 출력
