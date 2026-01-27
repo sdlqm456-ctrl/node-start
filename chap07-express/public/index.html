@@ -7,11 +7,56 @@
   </head>
   <body>
     <h3>express.static</h3>
-    <form action="upload" method="post" enctype="multipart/form-data">
+    <form
+      name="actionFrm"
+      action="upload"
+      method="post"
+      enctype="multipart/form-data"
+    >
       이름: <input type="text" name="user_name" /><br />
       나이: <input type="number" name="user_age" /><br />
       이미지: <input type="file" name="user_img" /><br />
       <input type="submit" value="업로드" />
     </form>
+    <script>
+      // fetch 함수를 활용해서 file 전송.
+      document
+        .querySelector('form[name="actionFrm"]') //
+        .addEventListener("submit", (e) => {
+          e.preventDefault();
+
+          // multipart 요청처리.
+          const formData = new FormData();
+          formData.append(
+            "user_id",
+            document.querySelector('input[name="user_id"]').value,
+          );
+          formData.append(
+            "user_pw",
+            document.querySelector('input[name="user_pw"]').value,
+          );
+          formData.append(
+            "user_nm",
+            document.querySelector('input[name="user_nm"]').value,
+          );
+          formData.append(
+            "user_img",
+            document.querySelector('input[name="user_img"]').files[0],
+          );
+
+          // formData => user_name: '홍길동', user_age: 22, user_img: File()
+
+          // fetch함수.
+          fetch("/create", {
+            method: "post",
+            body: formData,
+          }) //
+            .then((resp) => resp.json())
+            .then((data) => {
+              console.log(data);
+            })
+            .catch((err) => console.error(err));
+        });
+    </script>
   </body>
 </html>
