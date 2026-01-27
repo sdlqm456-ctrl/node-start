@@ -1,0 +1,21 @@
+{
+  "name": "chap07-express",
+  "version": "1.0.0",
+  "description": "Node, Express 활용한 프로젝트",
+  "keywords": [
+    "Node",
+    "Express",
+    "Mysql",
+    "Nodemon"
+  ],
+  "license": "ISC",
+  "author": "jangsuyeon",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "epress": "^0.0.1-security"
+  }
+}

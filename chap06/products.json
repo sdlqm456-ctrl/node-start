@@ -1,0 +1,52 @@
+{
+  "products": [
+    {
+      "productId": 1,
+      "productName": "무선 블루투스 이어폰",
+      "price": 89000,
+      "seller": "사운드샵",
+      "image": "image/earphone.jpg"
+    },
+
+    {
+      "productId": 2,
+      "productName": "기계식 키보드",
+      "price": 129000,
+      "seller": "키보드월드",
+      "image": "image/keyboard.png"
+    },
+    {
+      "productId": 3,
+      "productName": "27인치 모니터",
+      "price": 259000,
+      "seller": "디스플레이몰",
+      "image": "image/moniter.png"
+    }
+  ],
+  "reviews": [
+    {
+      "reviewId": 101,
+      "content": "음질이 정말 좋아요. 배터리도 오래가요.",
+      "productId": 1,
+      "writer": "hong123"
+    },
+    {
+      "reviewId": 102,
+      "content": "착용감이 편하고 디자인이 깔끔합니다.",
+      "productId": 1,
+      "writer": "kimdev"
+    },
+    {
+      "reviewId": 103,
+      "content": "타건감이 좋고 소음이 적어요.",
+      "productId": 2,
+      "writer": "park_it"
+    },
+    {
+      "reviewId": 104,
+      "content": "화면이 선명해서 작업용으로 최고입니다.",
+      "productId": 3,
+      "writer": "choi99"
+    }
+  ]
+}

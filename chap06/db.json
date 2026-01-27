@@ -1,0 +1,41 @@
+{
+  "comments": [
+    {
+      "id": 1,
+      "title": "첫 번째 글",
+      "content": "json-server 연습용 게시글입니다.",
+      "writer": "홍길동",
+      "createdAt": "2026-01-26"
+    },
+    {
+      "id": 2,
+      "title": "두 번째 글",
+      "content": "데이터 출력 테스트 중입니다.",
+      "writer": "김철수",
+      "createdAt": "2026-01-27"
+    },
+    {
+      "id": 3,
+      "title": "세 번째 글",
+      "content": "데이터 출력 테스트 중입니다.",
+      "writer": "김수진",
+      "createdAt": "2026-01-28"
+    }
+  ],
+  "boards": [
+    {
+      "id": 1,
+      "title": "첫 번째 글",
+      "content": "json-server 연습용 게시글입니다.",
+      "writer": "홍길동",
+      "createdAt": "2026-01-26"
+    },
+    {
+      "id": 2,
+      "title": "두 번째 POST 글",
+      "content": "두 번째 버튼으로 등록한 글입니다.",
+      "writer": "김영희",
+      "createdAt": "2026-01-27"
+    }
+  ]
+}
