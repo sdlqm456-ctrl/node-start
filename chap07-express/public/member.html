@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>멤버 페이지</title>
+    <style>
+      /* 공통 배경 스타일 (로그인/회원가입과 통일) */
+      body {
+        margin: 0;
+        padding: 40px 20px;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      /* 메인 컨테이너 */
+      .list-container {
+        background-color: white;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        width: 100%;
+        max-width: 800px;
+      }
+
+      h3 {
+        color: #333;
+        text-align: center;
+        margin-top: 0;
+        margin-bottom: 25px;
+        font-size: 24px;
+        border-bottom: 2px solid #764ba2;
+        display: inline-block;
+        padding-bottom: 5px;
+      }
+
+      /* 테이블 스타일링 */
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+      }
+
+      thead {
+        background-color: #f8f9fa;
+      }
+
+      th {
+        padding: 15px;
+        text-align: left;
+        color: #555;
+        font-weight: 600;
+        border-bottom: 2px solid #eee;
+      }
+
+      td {
+        padding: 12px 15px;
+        border-bottom: 1px solid #eee;
+        vertical-align: middle;
+        color: #444;
+      }
+
+      /* 마우스 올렸을 때 행 강조 */
+      tbody tr:hover {
+        background-color: #fcfaff;
+        transition: background 0.2s;
+      }
+
+      /* 이미지 스타일 */
+      .profile-img {
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 50%; /* 원형 이미지 */
+        border: 2px solid #764ba2;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+
+      /* 하단 버튼 (로그아웃이나 가입화면 이동용) */
+      .action-bar {
+        margin-top: 20px;
+        text-align: right;
+      }
+
+      .btn-back {
+        text-decoration: none;
+        color: #764ba2;
+        font-weight: bold;
+        font-size: 14px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="list-container">
+      <div style="text-align: center">
+        <h3>회원 목록</h3>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>아이디</th>
+            <th>이름</th>
+            <th style="text-align: center">사진</th>
+            <th>회원 삭제</th>
+          </tr>
+        </thead>
+        <tbody id="list"></tbody>
+      </table>
+
+      <div class="action-bar">
+        <a href="index.html" class="btn-back"> 회원 추가 등록</a>
+      </div>
+    </div>
+    <script src="member.js"></script>
+  </body>
+</html>
