@@ -92,12 +92,55 @@
         font-weight: bold;
         font-size: 14px;
       }
+      /* 삭제 버튼 스타일 */
+      .btn-delete {
+        background-color: #ff4d4f;
+        color: #fff;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 13px;
+        cursor: pointer;
+        font-weight: 600;
+        transition:
+          background-color 0.2s,
+          transform 0.1s,
+          box-shadow 0.1s;
+      }
+
+      .btn-delete:hover {
+        background-color: #e6393b;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      }
+
+      .btn-delete:active {
+        transform: translateY(0);
+        box-shadow: none;
+      }
+
+      /* 삭제 버튼 비활성화 */
+      .btn-delete:disabled {
+        background-color: #ccc;
+        color: #888;
+        cursor: not-allowed;
+        box-shadow: none;
+        transform: none;
+        opacity: 0.7;
+      }
+
+      /* 비활성화 상태에서는 hover 효과 제거 */
+      .btn-delete:disabled:hover {
+        background-color: #ccc;
+        box-shadow: none;
+        transform: none;
+      }
     </style>
   </head>
   <body>
     <div class="list-container">
       <div style="text-align: center">
-        <h3>회원 목록</h3>
+        <h3>Member List</h3>
       </div>
 
       <table>
@@ -106,16 +149,74 @@
             <th>아이디</th>
             <th>이름</th>
             <th style="text-align: center">사진</th>
-            <th>회원 삭제</th>
+            <th>회원삭제</th>
           </tr>
         </thead>
         <tbody id="list"></tbody>
       </table>
 
       <div class="action-bar">
-        <a href="index.html" class="btn-back"> 회원 추가 등록</a>
+        <a href="index.html" class="btn-back">회원 가입</a>
       </div>
     </div>
-    <script src="member.js"></script>
+
+    <script>
+      const role = localStorage.getItem("role"); // role 속성으로 지정된 값.
+      const uid = localStorage.getItem("uid");
+      // DOM 객체.
+      let txt = document.createTextNode("(당신은 손님입니다)");
+      if (role || uid) {
+        // alert(`${uid}의 권한은 ${role}`);
+        txt = document.createTextNode(`(${uid}의 권한은 ${role})`);
+      }
+      document.querySelector("h3").appendChild(txt);
+
+      // 목록 가져오기 위한 라우팅 정보 확인
+      fetch("list")
+        .then((resp) => resp.json())
+        .then((data) => {
+          const listBody = document.querySelector("#list");
+          data.forEach((elem) => {
+            listBody.insertAdjacentHTML(
+              "beforeend",
+              `<tr id="member_${elem.user_id}">
+                 <td><strong>${elem.user_id}</strong></td>
+                 <td>${elem.user_name}</td>
+                 <td style="text-align: center;">
+                   <img class="profile-img" src="images/${elem.user_img}" alt="${elem.user_name}">
+                 </td>
+                 <td><button class="btn-delete" onclick="deleteMember('${elem.user_id}')">삭제</button></td>
+               </tr>`,
+            );
+          });
+        })
+        .catch((err) => {
+          console.error("데이터 로드 실패:", err);
+          document.querySelector("#list").innerHTML =
+            '<tr><td colspan="3" style="text-align:center;">데이터를 불러올 수 없습니다.</td></tr>';
+        });
+
+      // deleteMember() 함수정의.
+      function deleteMember(uid) {
+        if (role == "Admin") {
+          if (confirm("삭제하겠습니까?")) {
+            // remove();
+            fetch("delete/" + uid, { method: "delete" })
+              .then((resp) => resp.json())
+              .then((data) => {
+                if (data.retCode == "OK") {
+                  document.querySelector("#member_" + uid).remove();
+                  alert("삭제되었습니다.");
+                } else {
+                  alert("삭제 중 예외.");
+                }
+              })
+              .catch(console.log);
+          }
+        } else {
+          alert("삭제권한이 없습니다");
+        }
+      }
+    </script>
   </body>
 </html>

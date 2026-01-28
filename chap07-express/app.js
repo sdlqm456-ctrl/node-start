@@ -1,30 +1,35 @@
 const express = require("express");
 const multer = require("multer");
-const app = express(); // 인스턴스.
+const app = express(); // 서버 생성
 const crypto = require("crypto");
 const path = require("path");
 const fs = require("fs");
 
+// DB 연결
 const pool = require("./db");
 
 // 포트: 3000
 const SERVER_PORT = 3000;
 
-// multer 모듈을 활용하기 위한 설정.
+// multer 모듈을 활용하기 위한 설정
+// diskStorage: 폴더에 저장
 const storage = multer.diskStorage({
-  // 저장경로.
+  // destination: 저장경로 지정
   destination: (req, file, cb) => {
     console.log(file);
+    // cd (null: 에러x, 파일위치)
     cb(null, "public/images");
   },
-  // 파일이름.
+  // 파일이름
+  // Buffer: 바이트 / toString: 변환하다
   filename: (req, file, cb) => {
-    const file_name = Buffer.from(file.originalname, "latin1") //
-      .toString("utf-8");
+    const file_name = Buffer.from(file.originalname, "latin1").toString(
+      "utf-8",
+    );
     // 키보드_12131312390.png
-    const fn = file_name.substring(0, file_name.indexOf("."));
-    const ext = file_name.substring(file_name.indexOf("."));
-    cb(null, fn + "_" + Date.now() + ext);
+    const fn = file_name.substring(0, file_name.indexOf(".")); // 확장자 포함 자르기
+    const ext = file_name.substring(file_name.indexOf(".")); // 확장자 제외 자르기
+    cb(null, fn + "_" + Date.now() + ext); // 파일이름_현재시간 의 형태로 저장됨
   },
 });
 
@@ -66,11 +71,47 @@ app.post("/login", async (req, res) => {
   // 암호화 비번.
   let passwd = crypto.createHash("sha512").update(user_pw).digest("base64");
   let [result, sec] = await pool.query(
-    "select count(*) as cnt from member where user_id=? and user_pw=?",
+    "select user_name, responsibility from member where user_id=? and user_pw=?",
     [user_id, passwd],
   );
+  console.log(result);
   // 응답.
-  if (result[0].cnt > 0) {
+  if (result.length > 0) {
+    res.json({
+      retCode: "OK",
+      name: result[0].user_name,
+      role: result[0].responsibility,
+    });
+  } else {
+    res.json({ retCode: "NG" });
+  }
+});
+
+// 삭제.
+app.delete("/delete/:id", async (req, res) => {
+  const uid = req.params.id;
+  // 서버의 파일 삭제.
+  const [data, rows] = await pool.query(
+    "select user_img from member where user_id = ?",
+    [uid],
+  );
+  // 삭제쿼리.
+  const result = await pool.query("delete from member where user_id = ?", [
+    uid,
+  ]);
+  // 이미지삭제.
+  if (result[0].affectedRows) {
+    // 삭제된 회원의 이미지도 같이 지워주기.
+    const ufile = path.join(__dirname, "public/images", data[0].user_img);
+
+    fs.unlink(ufile, (err) => {
+      if (err) {
+        console.log(`${ufile} 삭제중 에러.`);
+      } else {
+        console.log(`${ufile} 삭제 완료.`);
+      }
+    });
+
     res.json({ retCode: "OK" });
   } else {
     res.json({ retCode: "NG" });
@@ -79,19 +120,10 @@ app.post("/login", async (req, res) => {
 
 // 회원목록.
 app.get("/list", async (req, res) => {
-  let [result, sec] = await pool.query("select * from member");
+  let [result, sec] = await pool.query(
+    "select * from member where responsibility = 'User'",
+  );
   res.json(result);
-});
-
-// 삭제
-app.delete("/delete1", async (req, res) => {
-  const user_id = req.params.user_id;
-  const result = await pool.query("delete * from member");
-  if (result) {
-    res.json({ retCode: "OK" });
-  } else {
-    res.json({ retCode: "NG" });
-  }
 });
 
 // 회원추가.
