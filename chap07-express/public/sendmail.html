@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <title>메일 발송</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #f5f5f5;
+      }
+      .mail-container {
+        width: 500px;
+        margin: 50px auto;
+        background: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      h2 {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      label {
+        display: block;
+        margin-top: 10px;
+        font-weight: bold;
+      }
+      input,
+      textarea {
+        width: 100%;
+        padding: 8px;
+        margin-top: 5px;
+        box-sizing: border-box;
+      }
+      textarea {
+        height: 150px;
+        resize: none;
+      }
+      button {
+        margin-top: 20px;
+        width: 100%;
+        padding: 10px;
+        background: #4caf50;
+        color: white;
+        border: none;
+        font-size: 16px;
+        cursor: pointer;
+        border-radius: 5px;
+      }
+      button:hover {
+        background: #45a049;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="mail-container">
+      <h2>메일 발송</h2>
+
+      <form action="/send-mail" method="post">
+        <label for="from">발신자</label>
+        <input
+          type="email"
+          id="from"
+          name="from"
+          placeholder="sender@example.com"
+          required
+        />
+
+        <label for="to">수신자</label>
+        <input
+          type="email"
+          id="to"
+          name="to"
+          placeholder="receiver@example.com"
+          required
+        />
+
+        <label for="subject">제목</label>
+        <input
+          type="text"
+          id="subject"
+          name="subject"
+          placeholder="메일 제목"
+          required
+        />
+
+        <label for="content">내용</label>
+        <textarea
+          id="content"
+          name="content"
+          placeholder="메일 내용을 입력하세요"
+          required
+        ></textarea>
+
+        <label for="file">첨부파일</label>
+        <input type="file" id="file" name="file" />
+
+        <button type="submit" class="sendBtn">메일 보내기</button>
+      </form>
+    </div>
+    <script>
+      // form=>submit, button=>click
+      // method:post, url:mail_send, body: to, subject, text 값.
+      document.querySelector("form").addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        // 멀티파트 요청
+        const formData = new FormData();
+        formData.append("from", document.querySelector("#from").value);
+        formData.append("to", document.querySelector("#to").value); // formData의 user_id 속성과 값 추가.
+        formData.append("subject", document.querySelector("#subject").value);
+        formData.append("content", document.querySelector("#content").value);
+
+        const fileInput = document.querySelector("#file");
+        if (fileInput.files.length > 0) {
+          formData.append("file", fileInput.files[0]);
+        }
+        // 항목체크
+        if (!to || !subject || !content) {
+          alert("필수 항목을 입력하세요");
+          return;
+        }
+        fetch("/mail_send", {
+          method: "post",
+          body: formData,
+        })
+          .then((resp) => resp.json())
+          .then((data) => {
+            console.log(data);
+          })
+          .catch((err) => console.error(err));
+      });
+    </script>
+  </body>
+</html>

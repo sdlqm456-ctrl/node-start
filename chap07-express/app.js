@@ -1,15 +1,25 @@
+require("dotenv").config();
 const express = require("express");
 const multer = require("multer");
-const app = express(); // 서버 생성
 const crypto = require("crypto");
 const path = require("path");
 const fs = require("fs");
+const transporter = require("./extensions/nodemailer");
+const cron_job = require("./extensions/nodecrom");
 
 // DB 연결
 const pool = require("./db");
 
+const app = express(); // 서버 생성
 // 포트: 3000
 const SERVER_PORT = 3000;
+
+// public 폴더의 html, css, js url을 통해서 접근.
+app.use(express.static("public"));
+// json 형태의 데이터 수신 가능. application/json
+app.use(express.json());
+// form 데이터 수신 가능. application/x-www-form-urlencoded
+app.use(express.urlencoded({ extended: true }));
 
 // multer 모듈을 활용하기 위한 설정
 // diskStorage: 폴더에 저장
@@ -35,13 +45,6 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage }); // multer 인스턴스.
 
-// public 폴더의 html, css, js url을 통해서 접근.
-app.use(express.static("public"));
-// json 형태의 데이터 수신 가능. application/json
-app.use(express.json());
-// form 데이터 수신 가능. application/x-www-form-urlencoded
-app.use(express.urlencoded({ extended: true }));
-
 // 라우팅. url : 실행함수.
 app.get("/", (req, res) => {
   // 실행할 기능.
@@ -49,6 +52,76 @@ app.get("/", (req, res) => {
 });
 // 라우팅 파일.
 app.use("/sample", require("./routes/sample.route"));
+// 스케줄 잡 시작
+app.get("/start", (req, res) => {
+  cron_job.start();
+  res.send("매일발송 시작됨");
+});
+// 스케줄 잡 종료
+app.get("/end", (req, res) => {
+  cron_job.end();
+  res.send("매일발송 끝");
+});
+
+// /members/guest@email.com
+app.get("/members/:to", async (req, res) => {
+  const to = req.params.to;
+  // to: 수신자
+  // member 테이블 조회
+  let [result, sec] = await pool.query(
+    "select * from member where responsibility = 'User'",
+  );
+  // 결과 (html를 만들어서 내용 출력하기)
+  let content = '<table border="2">';
+  content +=
+    "<table><thead><tr><td>아이디</tr><td><tr><td>이름</tr><td><tr><td>이미지</tr><td><tr><td>권한내용</tr><td>;";
+  content += "</tbable></thead>";
+
+  // 메일발송
+  transporter.sendMail(
+    {
+      from: process.env.FROM,
+      to: to, // 받는 사람 메일 주소
+      subject: "회원목록", // 메일 제목
+      text: content, // 메일 본문 내용
+    },
+    (err, info) => {
+      if (err) {
+        res.json({ retCode: "NG", retMsg: err });
+      }
+      res.json({ retCode: "OK", retMsg: info });
+    },
+  );
+});
+
+// 메일 발송
+app.post("/mail_send", upload.single("file"), (req, res) => {
+  const { to, subject, content } = req.body;
+  console.log(req.file);
+
+  transporter.sendMail(
+    {
+      from: process.env.FROM,
+      to: to, // 받는 사람 메일 주소
+      subject: subject, // 메일 제목
+      text: content, // 메일 본문 내용
+      // 첨부파일 (이미지 등)
+      attachments: [
+        {
+          // filename: req.file.fieldname,
+          path: path.join(__dirname, "public/images", req.file.fieldname),
+        },
+      ],
+    },
+    (err, info) => {
+      if (err) {
+        return res.json({ retCode: "NG", retMsg: err });
+      }
+      res.json({ retCode: "OK", retMsg: info });
+    },
+  );
+  console.log("sendmail start ==> ");
+});
 
 app.post("/upload", upload.single("user_img"), (req, res) => {
   console.log(req.body);
