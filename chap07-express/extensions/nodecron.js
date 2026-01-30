@@ -3,7 +3,7 @@ const cron = require("node-cron");
 const transport = require("./nodemailer");
 
 const cron_job = cron.schedule(
-  "* * * * * *",
+  "* * * 1 * *",
   () => {
     transport.sendMail(
       {

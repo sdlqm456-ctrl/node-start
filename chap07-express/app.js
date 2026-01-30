@@ -4,6 +4,7 @@ const multer = require("multer");
 const crypto = require("crypto");
 const path = require("path");
 const fs = require("fs");
+const updateMembers = require("/extensions/excle");
 const transporter = require("./extensions/nodemailer");
 const cron_job = require("./extensions/nodecrom");
 
@@ -52,6 +53,11 @@ app.get("/", (req, res) => {
 });
 // 라우팅 파일.
 app.use("/sample", require("./routes/sample.route"));
+
+// 엑셀 업로드 => 신규회원 추가하기
+// 요청방식: post, url: /upload/member, 엑셀연습1.xlsx 파일
+app.post("/upload/member", upload.single("excle"), async (req, res) => {});
+
 // 스케줄 잡 시작
 app.get("/start", (req, res) => {
   cron_job.start();
